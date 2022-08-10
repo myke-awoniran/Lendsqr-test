@@ -4,8 +4,8 @@ import helmet from 'helmet';
 import express from 'express';
 import bodyParser from 'body-parser';
 import version_1 from './versions/versions';
-import { undefinedRoutes, homeHandler } from './helpers/app.helper';
 import { errorHandler } from './exceptions/global.errors';
+import { undefinedRoutes, homeHandler } from './helpers/app.helper';
 
 const app = express();
 
