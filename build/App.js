@@ -9,8 +9,8 @@ const helmet_1 = __importDefault(require("helmet"));
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const versions_1 = __importDefault(require("./versions/versions"));
-const app_helper_1 = require("./helpers/app.helper");
 const global_errors_1 = require("./exceptions/global.errors");
+const app_helper_1 = require("./helpers/app.helper");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 //MIDDLEWARE TO PREVENT ATTACK AND HIDE INFORMATION ABOUT THE POWERED ENGINES
