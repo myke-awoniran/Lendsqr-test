@@ -1,0 +1,30 @@
+{
+  "name": "lendsqr",
+  "version": "1.0.0",
+  "description": "Lendsqr test",
+  "main": "index.js",
+  "scripts": {
+    "test": "",
+    "start:build": "tsc -w",
+    "start:prod": "NODE_ENV=production nodemon build/server.js",
+    "start:dev": "NODE_ENV=development nodemon build/server.js",
+    "start": "concurrently 'npm:start:build' 'npm:start:prod'",
+    "dev": "concurrently 'npm:start:build' 'npm:start:dev'"
+  },
+  "keywords": [],
+  "author": "Micheal",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "]"
+  },
+  "dependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.13",
+    "body-parser": "^1.20.0",
+    "concurrently": "^7.3.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19"
+  }
+}
