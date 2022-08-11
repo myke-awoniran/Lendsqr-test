@@ -6,6 +6,6 @@ const version_1 = Router();
 
 version_1.use('/auth', authRouter);
 
-version_1.unsubscribe('/users', userRouter);
+version_1.use('/users', userRouter);
 
 export default version_1;

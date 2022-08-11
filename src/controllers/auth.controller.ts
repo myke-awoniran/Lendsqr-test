@@ -4,9 +4,17 @@ import { dumbUser } from '../dtos/create-user.dtos';
 import { serverResponse } from '../dtos/response.dtos';
 import { Response, Request, NextFunction } from 'express';
 import { ExistingUser } from '../helpers/existing-user.helper';
-import { createHash, comparePassword } from '../helpers/token.helper';
-import { signToken } from '../helpers/token.helper';
+import {
+  createHash,
+  comparePassword,
+  verifyToken,
+  signToken,
+} from '../helpers/token.helper';
+import { JwtPayload } from 'jsonwebtoken';
 
+interface RequestWithUser extends Request {
+  user: object;
+}
 // CONTROLLER FOR  SIGNING USER UP
 export async function HttpSignup(
   req: Request,
@@ -44,16 +52,26 @@ export async function HttpLogin(
   }
 }
 
-export async function HttpProtectROute(
-  req: Request,
+export async function HttpProtectRoute(
+  req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) {
   try {
-    let token: string;
+    let token;
+
     if (req.headers.authorization?.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
+    console.log(token);
+    if (!token)
+      throw new X(`you're not logged in, kindly login to access`, 401);
+    const secret = JSON.stringify(process.env.JWT_SECRET);
+    const payload = await verifyToken(token, secret);
+    const user = await Users.findOne(payload.id);
+    if (!user)
+      throw new X('there is no user user with the provided token', 400);
+    req.user = user;
   } catch (error) {
     next(error);
   }
