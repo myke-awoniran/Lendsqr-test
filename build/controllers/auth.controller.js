@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HttpGetUsers = exports.HttpProtectROute = exports.HttpLogin = exports.HttpSignup = void 0;
+exports.HttpProtectROute = exports.HttpLogin = exports.HttpSignup = void 0;
 const user_services_1 = require("../services/user.services");
 const operational_error_1 = require("../exceptions/operational.error");
 const create_user_dtos_1 = require("../dtos/create-user.dtos");
 const response_dtos_1 = require("../dtos/response.dtos");
 const existing_user_helper_1 = require("../helpers/existing-user.helper");
 const token_helper_1 = require("../helpers/token.helper");
+const token_helper_2 = require("../helpers/token.helper");
 // CONTROLLER FOR  SIGNING USER UP
 function HttpSignup(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -24,7 +25,7 @@ function HttpSignup(req, res, next) {
                 return next(new operational_error_1.X('account already exist', 409));
             req.body.password = yield (0, token_helper_1.createHash)(req.body.password);
             const user = yield user_services_1.Users.create(req.body);
-            return (0, response_dtos_1.serverResponse)(res, 201, user);
+            return (0, response_dtos_1.serverResponse)(res, 201, (0, create_user_dtos_1.dumbUser)(user), yield (0, token_helper_2.signToken)(user.id));
         }
         catch (error) {
             next(error);
@@ -42,7 +43,9 @@ function HttpLogin(req, res, next) {
             const [user] = yield user_services_1.Users.findOneByEmail(email);
             if (!user || !(yield (0, token_helper_1.comparePassword)(password, user.password)))
                 throw new operational_error_1.X('invalid username or password', 400);
-            return (0, response_dtos_1.serverResponse)(res, 200, (0, create_user_dtos_1.dumbUser)(user));
+            console.log(user.id);
+            const token = yield (0, token_helper_2.signToken)(user.id);
+            return (0, response_dtos_1.serverResponse)(res, 200, (0, create_user_dtos_1.dumbUser)(user), token);
         }
         catch (error) {
             next(error);
@@ -51,10 +54,12 @@ function HttpLogin(req, res, next) {
 }
 exports.HttpLogin = HttpLogin;
 function HttpProtectROute(req, res, next) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let token;
-            if (req.headers && req.headers.authorization) {
+            if ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.startsWith('Bearer')) {
+                token = req.headers.authorization.split(' ')[1];
             }
         }
         catch (error) {
@@ -63,15 +68,3 @@ function HttpProtectROute(req, res, next) {
     });
 }
 exports.HttpProtectROute = HttpProtectROute;
-function HttpGetUsers(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const users = yield user_services_1.Users.find();
-            (0, response_dtos_1.serverResponse)(res, 200, users);
-        }
-        catch (error) {
-            next(error);
-        }
-    });
-}
-exports.HttpGetUsers = HttpGetUsers;

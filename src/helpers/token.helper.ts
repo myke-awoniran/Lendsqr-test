@@ -11,12 +11,12 @@ export async function comparePassword(
 ): Promise<boolean> {
   return await bcrypt.compare(password, userPassword);
 }
+const secret = JSON.stringify(process.env.JWT_SECRET);
 
-console.log(process.env.PORT);
-// export async function signToken(id: object): Promise<void> {
-//   return await jwt.sign({ id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_EXPIRES,
-//   });
-// }
+export async function signToken(id: number) {
+  return await jwt.sign({ id }, 'jsjsusjs', {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
+}
 
 // export function verifyToken() {}

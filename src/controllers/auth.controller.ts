@@ -5,6 +5,7 @@ import { serverResponse } from '../dtos/response.dtos';
 import { Response, Request, NextFunction } from 'express';
 import { ExistingUser } from '../helpers/existing-user.helper';
 import { createHash, comparePassword } from '../helpers/token.helper';
+import { signToken } from '../helpers/token.helper';
 
 // CONTROLLER FOR  SIGNING USER UP
 export async function HttpSignup(
@@ -17,7 +18,7 @@ export async function HttpSignup(
       return next(new X('account already exist', 409));
     req.body.password = await createHash(req.body.password);
     const user = await Users.create(req.body);
-    return serverResponse(res, 201, user);
+    return serverResponse(res, 201, dumbUser(user), await signToken(user.id));
   } catch (error) {
     next(error);
   }
@@ -35,7 +36,9 @@ export async function HttpLogin(
     const [user] = await Users.findOneByEmail(email);
     if (!user || !(await comparePassword(password, user.password)))
       throw new X('invalid username or password', 400);
-    return serverResponse(res, 200, dumbUser(user));
+    console.log(user.id);
+    const token = await signToken(user.id);
+    return serverResponse(res, 200, dumbUser(user), token);
   } catch (error) {
     next(error);
   }
@@ -47,22 +50,10 @@ export async function HttpProtectROute(
   next: NextFunction
 ) {
   try {
-    let token;
-    if (req.headers && req.headers.authorization) {
+    let token: string;
+    if (req.headers.authorization?.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
     }
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function HttpGetUsers(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const users = await Users.find();
-    serverResponse(res, 200, users);
   } catch (error) {
     next(error);
   }

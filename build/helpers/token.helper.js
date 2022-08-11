@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.comparePassword = exports.createHash = void 0;
+exports.signToken = exports.comparePassword = exports.createHash = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 function createHash(password) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -26,10 +27,13 @@ function comparePassword(password, userPassword) {
     });
 }
 exports.comparePassword = comparePassword;
-console.log(process.env.PORT);
-// export async function signToken(id: object): Promise<void> {
-//   return await jwt.sign({ id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_EXPIRES,
-//   });
-// }
+const secret = JSON.stringify(process.env.JWT_SECRET);
+function signToken(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield jsonwebtoken_1.default.sign({ id }, 'jsjsusjs', {
+            expiresIn: process.env.JWT_EXPIRES,
+        });
+    });
+}
+exports.signToken = signToken;
 // export function verifyToken() {}
