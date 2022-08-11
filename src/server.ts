@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
+
 import http from 'http';
 import App from './App';
 import { connectDb } from './repositories/database.connection';
@@ -12,7 +13,7 @@ async function startServer(port: string | number): Promise<void> {
   await connectDb();
   server.listen(port, () => {
     console.log(
-      `${process.env.NODE_ENV} :::lendsqr API listening to traffic on port ${port}} `
+      `${process.env.NODE_ENV} :::lend-sqr API listening to traffic on port ${port} `
     );
   });
 }

@@ -5,10 +5,10 @@ import { Model } from 'objection';
 export const db = knex({
   client: 'mysql',
   connection: {
-    host: 'mysql-85164-0.cloudclusters.net',
+    host: process.env.HOST,
     port: 10744,
-    user: 'admin',
-    password: 'y1Nip8sq',
+    user: process.env.DATABASE_USER,
+    password: process.env.PASSWORD,
     database: process.env.DATABASE,
   },
   migrations: {
@@ -18,16 +18,7 @@ export const db = knex({
 
 Model.knex(db);
 
-export function connectDb(): void {
-  db.raw('SELECT VERSION()');
+export async function connectDb(): Promise<void> {
+  await db.raw('SELECT VERSION()');
   console.log('database connected successfully');
-}
-
-declare module 'knex/types/tables' {
-  interface User {
-    id: number;
-    name: string;
-    created_at: string;
-    updated_at: string;
-  }
 }

@@ -2,6 +2,7 @@ import { Model } from 'objection';
 import { Transaction } from './transactions.entity';
 
 export class Customer extends Model {
+  //
   static get tableName() {
     return 'customers';
   }
@@ -29,6 +30,7 @@ export class Customer extends Model {
     return {
       type: 'object',
       required: ['first_name', 'last_name', 'email', 'password'],
+      //   unique: ['email'],
       properties: {
         id: { type: 'integer' },
         first_name: { type: 'string', minLength: 4, maxLength: 50 },

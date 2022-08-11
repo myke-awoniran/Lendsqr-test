@@ -24,7 +24,7 @@ function startServer(port) {
         // CONNECT DATABASE BEFORE STARTING THE SERVER
         yield (0, database_connection_1.connectDb)();
         server.listen(port, () => {
-            console.log(`${process.env.NODE_ENV} :::lendsqr API listening to traffic on port ${port}} `);
+            console.log(`${process.env.NODE_ENV} :::lend-sqr API listening to traffic on port ${port} `);
         });
     });
 }

@@ -16,9 +16,9 @@ app.use((0, cors_1.default)());
 //MIDDLEWARE TO PREVENT ATTACK AND HIDE INFORMATION ABOUT THE POWERED ENGINES
 app.use((0, helmet_1.default)());
 //MIDDLEWARE TO PLACE THE BODY OBJECT ON THE REQUEST BODY
-app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.use(body_parser_1.default.json());
 // LOGGER MIDDLEWARE
-app.use((0, morgan_1.default)('combined'));
+app.use((0, morgan_1.default)('dev'));
 // HOME ROUTER
 app.get('/', app_helper_1.homeHandler);
 // VERSIONS CONTROLLER, incase the company want to release different versions
