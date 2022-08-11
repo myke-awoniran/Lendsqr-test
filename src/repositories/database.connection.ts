@@ -1,6 +1,8 @@
 import { knex } from 'knex';
+import { Model } from 'objection';
 
-const db = knex({
+// initialize knex
+export const db = knex({
   client: 'mysql',
   connection: {
     host: 'mysql-85164-0.cloudclusters.net',
@@ -13,6 +15,8 @@ const db = knex({
     tableName: 'migrations',
   },
 });
+
+Model.knex(db);
 
 export function connectDb(): void {
   db.raw('SELECT VERSION()');
