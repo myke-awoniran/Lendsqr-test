@@ -60,15 +60,16 @@ function HttpProtectRoute(req, res, next) {
             if ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.startsWith('Bearer')) {
                 token = req.headers.authorization.split(' ')[1];
             }
-            console.log(token);
             if (!token)
                 throw new operational_error_1.X(`you're not logged in, kindly login to access`, 401);
             const secret = JSON.stringify(process.env.JWT_SECRET);
             const payload = yield (0, token_helper_1.verifyToken)(token, secret);
             const user = yield user_services_1.Users.findOne(payload.id);
+            console.log(payload.id);
             if (!user)
                 throw new operational_error_1.X('there is no user user with the provided token', 400);
             req.user = user;
+            next();
         }
         catch (error) {
             next(error);
