@@ -5,6 +5,8 @@ import { dumbUser } from '../dtos/create-user.dtos';
 import { serverResponse } from '../dtos/response.dtos';
 import { Response, Request, NextFunction } from 'express';
 import { ExistingUser } from '../helpers/existing-user.helper';
+import { HttpCreateVirtualAccount } from '../paystack/paystack.api';
+
 import {
   createHash,
   comparePassword,
@@ -35,6 +37,7 @@ export async function HttpSignup(
       return next(new X('account already exist', 409));
     req.body.password = await createHash(req.body.password);
     const user = await Users.create(req.body);
+    await HttpCreateVirtualAccount();
     return serverResponse(res, 201, dumbUser(user), await signToken(user.id));
   } catch (error) {
     next(error);

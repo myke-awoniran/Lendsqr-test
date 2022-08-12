@@ -15,6 +15,7 @@ const operational_error_1 = require("../exceptions/operational.error");
 const create_user_dtos_1 = require("../dtos/create-user.dtos");
 const response_dtos_1 = require("../dtos/response.dtos");
 const existing_user_helper_1 = require("../helpers/existing-user.helper");
+const paystack_api_1 = require("../paystack/paystack.api");
 const token_helper_1 = require("../helpers/token.helper");
 // CONTROLLER FOR  SIGNING USER UP
 function HttpSignup(req, res, next) {
@@ -24,6 +25,7 @@ function HttpSignup(req, res, next) {
                 return next(new operational_error_1.X('account already exist', 409));
             req.body.password = yield (0, token_helper_1.createHash)(req.body.password);
             const user = yield user_services_1.Users.create(req.body);
+            yield (0, paystack_api_1.HttpCreateVirtualAccount)();
             return (0, response_dtos_1.serverResponse)(res, 201, (0, create_user_dtos_1.dumbUser)(user), yield (0, token_helper_1.signToken)(user.id));
         }
         catch (error) {
