@@ -5,7 +5,7 @@ import { dumbUser } from '../dtos/create-user.dtos';
 import { serverResponse } from '../dtos/response.dtos';
 import { Response, Request, NextFunction } from 'express';
 import { ExistingUser } from '../helpers/existing-user.helper';
-import { HttpCreateVirtualAccount } from '../paystack/paystack.api';
+// import { HttpCreateVirtualAccount } from '../paystack/paystack.api';
 
 import {
   createHash,
@@ -20,12 +20,6 @@ export interface RequestWithUser extends Request {
   };
 }
 
-interface Payload extends JwtPayload {
-  id: number;
-  iat: number;
-  exp: number;
-}
-
 // CONTROLLER FOR  SIGNING USER UP
 export async function HttpSignup(
   req: Request,
@@ -37,9 +31,9 @@ export async function HttpSignup(
       return next(new X('account already exist', 409));
     req.body.password = await createHash(req.body.password);
     const user = await Users.create(req.body);
-    await HttpCreateVirtualAccount();
+    // await HttpCreateVirtualAccount();
     return serverResponse(res, 201, dumbUser(user), await signToken(user.id));
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 }
@@ -59,7 +53,7 @@ export async function HttpLogin(
     console.log(user.id);
     const token = await signToken(user.id);
     return serverResponse(res, 200, dumbUser(user), token);
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 }
@@ -78,14 +72,14 @@ export async function HttpProtectRoute(
     if (!token)
       throw new X(`you're not logged in, kindly login to access`, 401);
     const secret = JSON.stringify(process.env.JWT_SECRET);
-    const payload: Payload = await verifyToken(token, secret);
+    const payload: any = await verifyToken(token, secret);
     const user = await Users.findOne(payload.id);
     console.log(payload.id);
     if (!user)
       throw new X('there is no user user with the provided token', 400);
     req.user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 }
