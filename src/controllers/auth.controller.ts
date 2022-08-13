@@ -5,7 +5,7 @@ import { dumbUser } from '../dtos/create-user.dtos';
 import { serverResponse } from '../dtos/response.dtos';
 import { Response, Request, NextFunction } from 'express';
 import { ExistingUser } from '../helpers/existing-user.helper';
-// import { HttpCreateVirtualAccount } from '../paystack/paystack.api';
+import { CreateUser } from '../paystack/paystack.api';
 
 import {
   createHash,
@@ -29,9 +29,11 @@ export async function HttpSignup(
   try {
     if (await ExistingUser(req.body.email))
       return next(new X('account already exist', 409));
+    const payStackCustomer = await CreateUser(req, next);
+    req.body.customer_code = payStackCustomer.data.customer_code;
+    req.body.paystack_id = payStackCustomer.data.id;
     req.body.password = await createHash(req.body.password);
     const user = await Users.create(req.body);
-    // await HttpCreateVirtualAccount();
     return serverResponse(res, 201, dumbUser(user), await signToken(user.id));
   } catch (error: any) {
     next(error);
@@ -50,7 +52,6 @@ export async function HttpLogin(
     const [user] = await Users.findOneByEmail(email);
     if (!user || !(await comparePassword(password, user.password)))
       throw new X('invalid username or password', 400);
-    console.log(user.id);
     const token = await signToken(user.id);
     return serverResponse(res, 200, dumbUser(user), token);
   } catch (error: any) {

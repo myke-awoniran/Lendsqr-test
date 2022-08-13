@@ -25,6 +25,15 @@ export class Customer extends Model {
   static get addressColumn() {
     return 'address';
   }
+  static get paystackId() {
+    return 'paystack_id';
+  }
+  static get customerCode() {
+    return 'customer_code';
+  }
+  static get accountType() {
+    return 'account_type';
+  }
 
   static get jsonSchema() {
     return {

@@ -15,7 +15,7 @@ const operational_error_1 = require("../exceptions/operational.error");
 const create_user_dtos_1 = require("../dtos/create-user.dtos");
 const response_dtos_1 = require("../dtos/response.dtos");
 const existing_user_helper_1 = require("../helpers/existing-user.helper");
-// import { HttpCreateVirtualAccount } from '../paystack/paystack.api';
+const paystack_api_1 = require("../paystack/paystack.api");
 const token_helper_1 = require("../helpers/token.helper");
 // CONTROLLER FOR  SIGNING USER UP
 function HttpSignup(req, res, next) {
@@ -23,9 +23,11 @@ function HttpSignup(req, res, next) {
         try {
             if (yield (0, existing_user_helper_1.ExistingUser)(req.body.email))
                 return next(new operational_error_1.X('account already exist', 409));
+            const payStackCustomer = yield (0, paystack_api_1.CreateUser)(req, next);
+            req.body.customer_code = payStackCustomer.data.customer_code;
+            req.body.paystack_id = payStackCustomer.data.id;
             req.body.password = yield (0, token_helper_1.createHash)(req.body.password);
             const user = yield user_services_1.Users.create(req.body);
-            // await HttpCreateVirtualAccount();
             return (0, response_dtos_1.serverResponse)(res, 201, (0, create_user_dtos_1.dumbUser)(user), yield (0, token_helper_1.signToken)(user.id));
         }
         catch (error) {
@@ -44,7 +46,6 @@ function HttpLogin(req, res, next) {
             const [user] = yield user_services_1.Users.findOneByEmail(email);
             if (!user || !(yield (0, token_helper_1.comparePassword)(password, user.password)))
                 throw new operational_error_1.X('invalid username or password', 400);
-            console.log(user.id);
             const token = yield (0, token_helper_1.signToken)(user.id);
             return (0, response_dtos_1.serverResponse)(res, 200, (0, create_user_dtos_1.dumbUser)(user), token);
         }

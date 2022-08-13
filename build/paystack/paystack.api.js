@@ -12,24 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateUser = void 0;
 const axios_1 = __importDefault(require("axios"));
-const options = {
-    data: {
-        email: 'awoniranopeyemi@gmail.com',
-    },
-    headers: {
-        Authorization: 'Bearer sk_test_15fed987ed8e42bf1d68ac6503757e4bf29cdcf0',
-    },
-};
-function createUser() {
+function CreateUser(req, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield axios_1.default.post('https://api.paystack.co/customer', options);
-            console.log(response);
+            const response = yield (0, axios_1.default)({
+                method: 'post',
+                url: 'https://api.paystack.co/customer',
+                data: {
+                    email: req.body.email,
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name,
+                },
+                headers: {
+                    Authorization: `Bearer ${process.env.PAYSTACK_KEY}`,
+                },
+            });
+            return response.data;
         }
         catch (error) {
-            console.log(error.message);
+            next(error);
         }
     });
 }
-createUser();
+exports.CreateUser = CreateUser;
