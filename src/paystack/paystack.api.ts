@@ -55,7 +55,6 @@ export async function initiateTransfer(
 
 export async function finalizeTransfer(
   req: Request,
-  res: Response,
   next: NextFunction
 ): Promise<any> {
   try {
