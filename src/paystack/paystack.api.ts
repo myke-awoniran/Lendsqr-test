@@ -52,3 +52,26 @@ export async function initiateTransfer(
     next(error);
   }
 }
+
+export async function finalizeTransfer(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'https://api.paystack.co/transfer/finalize-transfer',
+      data: {
+        transfer_code: req.body.transfer_code,
+        otp: req.body.otp,
+      },
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_KEY}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    next(error);
+  }
+}
