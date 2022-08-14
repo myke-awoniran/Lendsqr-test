@@ -2,7 +2,7 @@ import axios from 'axios';
 import { NextFunction, Request } from 'express';
 
 // I USED THIS TO FIX THE POOR TYPE DEFINITION ON REQUEST BODY
-interface RequestBody extends Request {
+export interface RequestBody extends Request {
   body: { [key: string]: string | undefined };
 }
 
@@ -25,6 +25,30 @@ export async function CreateUser(
     });
     return response.data;
   } catch (error: any) {
+    next(error);
+  }
+}
+
+export async function initiateTransfer(
+  req: RequestBody,
+  next: NextFunction
+): Promise<any> {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'https://api.paystack.co/transfer',
+      data: {
+        source: req.body.source,
+        reason: req.body.reason,
+        amount: req.body.amount,
+        recipient: req.body.recipient,
+      },
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_KEY}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
     next(error);
   }
 }

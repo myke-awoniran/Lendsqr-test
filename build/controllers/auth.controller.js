@@ -24,8 +24,8 @@ function HttpSignup(req, res, next) {
             if (yield (0, existing_user_helper_1.ExistingUser)(req.body.email))
                 return next(new operational_error_1.X('account already exist', 409));
             const payStackCustomer = yield (0, paystack_api_1.CreateUser)(req, next);
-            req.body.customer_code = payStackCustomer.data.customer_code;
             req.body.paystack_id = payStackCustomer.data.id;
+            req.body.customer_code = payStackCustomer.data.customer_code;
             req.body.password = yield (0, token_helper_1.createHash)(req.body.password);
             const user = yield user_services_1.Users.create(req.body);
             return (0, response_dtos_1.serverResponse)(res, 201, (0, create_user_dtos_1.dumbUser)(user), yield (0, token_helper_1.signToken)(user.id));

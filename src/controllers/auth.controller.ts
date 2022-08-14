@@ -1,4 +1,3 @@
-import { JwtPayload } from 'jsonwebtoken';
 import { Users } from '../services/user.services';
 import { X } from '../exceptions/operational.error';
 import { dumbUser } from '../dtos/create-user.dtos';
@@ -30,8 +29,8 @@ export async function HttpSignup(
     if (await ExistingUser(req.body.email))
       return next(new X('account already exist', 409));
     const payStackCustomer = await CreateUser(req, next);
-    req.body.customer_code = payStackCustomer.data.customer_code;
     req.body.paystack_id = payStackCustomer.data.id;
+    req.body.customer_code = payStackCustomer.data.customer_code;
     req.body.password = await createHash(req.body.password);
     const user = await Users.create(req.body);
     return serverResponse(res, 201, dumbUser(user), await signToken(user.id));
