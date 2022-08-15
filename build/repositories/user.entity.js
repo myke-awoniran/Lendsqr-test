@@ -36,7 +36,6 @@ class Customer extends objection_1.Model {
         return {
             type: 'object',
             required: ['first_name', 'last_name', 'email', 'password'],
-            //   unique: ['email'],
             properties: {
                 id: { type: 'integer' },
                 first_name: { type: 'string', minLength: 4, maxLength: 50 },

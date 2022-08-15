@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initiateTransfer = exports.CreateUser = void 0;
+exports.finalizeTransfer = exports.initiateTransfer = exports.CreateUser = void 0;
 const axios_1 = __importDefault(require("axios"));
 function CreateUser(req, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -61,3 +61,25 @@ function initiateTransfer(req, next) {
     });
 }
 exports.initiateTransfer = initiateTransfer;
+function finalizeTransfer(req, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield (0, axios_1.default)({
+                method: 'post',
+                url: 'https://api.paystack.co/transfer/finalize-transfer',
+                data: {
+                    transfer_code: req.body.transfer_code,
+                    otp: req.body.otp,
+                },
+                headers: {
+                    Authorization: `Bearer ${process.env.PAYSTACK_KEY}`,
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+}
+exports.finalizeTransfer = finalizeTransfer;
