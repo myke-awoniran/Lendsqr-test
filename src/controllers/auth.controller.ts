@@ -58,7 +58,7 @@ export async function HttpLogin(
   }
 }
 
-export async function HttpProtectRoute(
+export async function   HttpProtectRoute(
   req: RequestWithUser,
   res: Response,
   next: NextFunction

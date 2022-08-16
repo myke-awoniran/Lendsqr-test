@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request } from 'express';
 
-// I USED THIS TO FIX THE POOR TYPE DEFINITION ON REQUEST BODY
+//  USE THIS TO FIX THE POOR TYPE DEFINITION ON REQUEST BODY
 export interface RequestBody extends Request {
   body: { [key: string]: string | undefined };
 }

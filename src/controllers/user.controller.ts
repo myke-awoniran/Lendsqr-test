@@ -9,7 +9,7 @@ export async function HttpGetUserProfile(
   req: RequestWithUser,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   try {
     const user = await Users.findOne(req.user.id);
     if (!user) throw new X('no user found with the provided id', 404);
