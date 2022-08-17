@@ -1,5 +1,12 @@
 // X means exception
 
+interface Error {
+  message: string;
+  statusCode: number;
+  status: string;
+  isoperational: boolean;
+}
+
 export class X extends Error {
   constructor(
     public message: string,
